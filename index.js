@@ -20,8 +20,29 @@ app.get("/", function (req, res) {
 
 
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.get("/api/:date?", function (req, res) {
+  //check input for unix
+  let userDate;
+  const unixRegex = /^[0-9]+$/
+  if (unixRegex.test(req.params.date)) {
+    //if unix
+    userDate = new Date(parseInt(req.params.date))
+  } else if (!req.params.date) {
+    userDate = new Date();
+  } else {
+    //Parse date
+    userDate = new Date(req.params.date);
+  };
+  
+  //format for two date keys
+  var UTCDate = userDate.toUTCString();
+  var unixDate = userDate.getTime();
+  //respond with date values or invalid date
+  if (!unixDate){
+    res.json({ error: "Invalid Date" })
+  } else {
+  res.json({unix: unixDate, utc: UTCDate});
+  };
 });
 
 
